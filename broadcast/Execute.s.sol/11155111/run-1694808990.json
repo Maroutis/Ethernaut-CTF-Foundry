@@ -1,0 +1,36 @@
+{
+  "transactions": [
+    {
+      "hash": "0xb228e63b56dd253884905cc854b1ebcbf865c83c1f751433620d765b3f1c5264",
+      "transactionType": "CALL",
+      "contractName": "CoinFlip",
+      "contractAddress": "0x44e0793DCEe07219e24E8B1cF24b61fcD471C0b1",
+      "function": "flip(bool):(bool)",
+      "arguments": [
+        "true"
+      ],
+      "transaction": {
+        "type": "0x02",
+        "from": "0xfd7059cf48ef2417a1b6eeac9a77b6ca2d94a34e",
+        "to": "0x44e0793dcee07219e24e8b1cf24b61fcd471c0b1",
+        "gas": "0xb757",
+        "value": "0x0",
+        "data": "0x1d263f670000000000000000000000000000000000000000000000000000000000000001",
+        "nonce": "0x3a4",
+        "accessList": []
+      },
+      "additionalContracts": [],
+      "isFixedGasLimit": false
+    }
+  ],
+  "receipts": [],
+  "libraries": [],
+  "pending": [
+    "0xb228e63b56dd253884905cc854b1ebcbf865c83c1f751433620d765b3f1c5264"
+  ],
+  "returns": {},
+  "timestamp": 1694808990,
+  "chain": 11155111,
+  "multi": false,
+  "commit": "680aed5"
+}
