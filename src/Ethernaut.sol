@@ -5,6 +5,7 @@ pragma solidity ^0.8.18;
 import {Level} from "./Level.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IStatistics} from "./IStatistics.sol";
+// import {console} from "forge-std/Test.sol";
 
 contract Ethernaut is Ownable {
     IStatistics public statistics;

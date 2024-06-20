@@ -3,6 +3,7 @@
 pragma solidity ^0.8.18;
 
 import {Script} from "forge-std/Script.sol";
+// import {console} from "forge-std/Test.sol";
 import {Level} from "src/Level.sol";
 import {Ethernaut} from "src/Ethernaut.sol";
 import {Statistics} from "src/Statistics.sol";
@@ -40,7 +41,14 @@ contract HelperConfig is Script {
         vm.recordLogs();
         ethernaut.createLevelInstance{value: msg.value}(Level(_factory));
         Vm.Log[] memory entries = vm.getRecordedLogs();
-        instanceAddress = abi.decode(abi.encode(entries[0].topics[2]), (address));
+        uint256 i = 0;
+        while (entries[i].topics[0] != keccak256("LevelInstanceCreatedLog(address,address,address)")) {
+            ++i;
+        }
+        assert(entries[i].topics[0] == keccak256("LevelInstanceCreatedLog(address,address,address)"));
+        // event LevelInstanceCreatedLog(address indexed player, address indexed instance, address indexed level);
+
+        instanceAddress = abi.decode(abi.encode(entries[i].topics[2]), (address));
 
         vm.stopBroadcast();
 
@@ -64,7 +72,14 @@ contract HelperConfig is Script {
         vm.startPrank(player);
         ethernaut.createLevelInstance{value: msg.value}(Level(_factory));
         Vm.Log[] memory entries = vm.getRecordedLogs();
-        instanceAddress = abi.decode(abi.encode(entries[0].topics[2]), (address));
+        uint256 i = 0;
+        while (entries[i].topics[0] != keccak256("LevelInstanceCreatedLog(address,address,address)")) {
+            ++i;
+        }
+        assert(entries[i].topics[0] == keccak256("LevelInstanceCreatedLog(address,address,address)"));
+        // event LevelInstanceCreatedLog(address indexed player, address indexed instance, address indexed level);
+
+        instanceAddress = abi.decode(abi.encode(entries[i].topics[2]), (address));
         vm.stopPrank();
 
         // vm.stopBroadcast();
