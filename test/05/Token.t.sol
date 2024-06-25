@@ -22,6 +22,8 @@ contract TokenTest is Test, BaseTest {
 
     function setUp() public override {
         super.setUp();
+        config = new HelperConfig{value: 1 ether}(levelFactory);
+        (ethernaut, instance,) = config.activeNetworkConfig();
 
         instanceContract = Token(instance);
         emit log_named_uint("balance", instanceContract.balanceOf(msg.sender));

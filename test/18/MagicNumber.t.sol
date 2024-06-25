@@ -22,6 +22,8 @@ contract MagicNumberTest is Test, BaseTest {
 
     function setUp() public override {
         super.setUp();
+        config = new HelperConfig{value: 1 ether}(levelFactory);
+        (ethernaut, instance,) = config.activeNetworkConfig();
 
         // Need to recover the deployment address
         instanceContract = MagicNumber(instance);

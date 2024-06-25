@@ -26,6 +26,8 @@ contract ReentranceTest is Test, BaseTest {
 
     function setUp() public override {
         super.setUp();
+        config = new HelperConfig{value: 1 ether}(levelFactory);
+        (ethernaut, instance,) = config.activeNetworkConfig();
 
         instanceContract = Reentrance(instance);
         emit log_named_uint("balance", address(instanceContract).balance);

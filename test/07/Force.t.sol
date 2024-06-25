@@ -22,6 +22,8 @@ contract ForceTest is Test, BaseTest {
 
     function setUp() public override {
         super.setUp();
+        config = new HelperConfig{value: 1 ether}(levelFactory);
+        (ethernaut, instance,) = config.activeNetworkConfig();
 
         instanceContract = Force(instance);
     }

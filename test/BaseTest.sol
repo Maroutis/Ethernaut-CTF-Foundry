@@ -8,7 +8,7 @@ import {HelperConfig} from "../script/HelperConfig.s.sol";
 import {Level} from "../src/Level.sol";
 
 abstract contract BaseTest is Test {
-    address private ethernaut;
+    address public ethernaut;
     address internal levelFactory;
     HelperConfig public config;
     address payable instance;
@@ -18,9 +18,6 @@ abstract contract BaseTest is Test {
 
     function setUp() public virtual {
         require(address(levelFactory) != address(0), "level not setup");
-
-        config = new HelperConfig{value: 1 ether}(levelFactory);
-        (ethernaut, instance,) = config.activeNetworkConfig();
     }
 
     function runLevel() public {

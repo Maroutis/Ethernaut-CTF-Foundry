@@ -21,6 +21,8 @@ contract DexTest is Test, BaseTest {
 
     function setUp() public override {
         super.setUp();
+        config = new HelperConfig{value: 1 ether}(levelFactory);
+        (ethernaut, instance,) = config.activeNetworkConfig();
 
         instanceContract = Dex(instance);
     }
@@ -31,6 +33,19 @@ contract DexTest is Test, BaseTest {
 
     function exploitLevel() internal override {
         vm.startPrank(player, player);
+
+        // The most important thing to notice here is that when you swap an amount of tokens for the other, the amount of the other token that can be taken out DO NOT decrease proportionally
+        // Example: For uniswap V2 the constant product formula is x * y = k
+        // You thus have x * y = (x + ∆x) * (y − ∆y)
+        // If you decide to swap an amount ∆x for ∆y : ∆y = ∆x * y / (x + ∆x) which maintains the invariant 
+        // While for Dex contract you would have : ∆y = ∆x * y / x. Since this formula does not account for the changes in token quantities after each swap, you would have x * y < k after the swap. After each swap, the user receives more tokens than intended. 
+        // Moroever the Dex formula does not adjust the price impact. For uniswap V2 after each trade, the token ratios make subsequent trades less favorable for a trader.
+
+        // Because the formula does not adjust the exchange rate based on the remaining pool balances, an attacker could repeatedly perform swaps to drain one token type from the pool without increasing the cost of subsequent swaps. While for uniswap, each swap should progressively worsen the rate due to the invariant maintenance.
+
+        // Invariant aside, there is also another issue related to rounding error. Imagine you are swapping X amount of token1 but that the balance(token2) * X < balance(token1), then you will get 0 tokens. This is another issue that is not discussed here.
+
+        // We will create a small script that continues swapping the max amount of user tokens until one of the two balances are 0. Some checks are put in place in case the balance of the Dex gets too low. In this case we will swap using the Dex's whole balance instead.
 
         instanceContract.approve(address(instanceContract), type(uint256).max);
         uint256 balanceDexToken1;
