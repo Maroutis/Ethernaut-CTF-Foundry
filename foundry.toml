@@ -5,6 +5,9 @@ libs = ["lib"]
 ffi = true
 auto_detect_solc = true
 fs_permissions = [{ access = "read", path = "./broadcast/"},{ access = "read", path = "./out/"}]
+evm_version = 'shanghai' # levl 31 stake level only works with this version
+# @note check https://github.com/foundry-rs/foundry/issues/4988
+# As 0.8.20 and PUSH0 is being used here, we require Shanghai as the evm version. However, no evm version is being passed in, so we're defaulting to Paris, were PUSH0 isn't available. Therefore we get this error : [NotActivated] EvmError: NotActivated.
 
 remappings = ["@openzeppelin/contracts=lib/openzeppelin-contracts/contracts","openzeppelin-contracts-08=lib/openzeppelin-contracts/contracts", "foundry-devops/src=lib/foundry-devops/src"]
 

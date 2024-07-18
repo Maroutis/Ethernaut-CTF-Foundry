@@ -58,7 +58,7 @@ contract PuzzleWalletTest is Test, BaseTest {
         // But we can bypass it by calling multicall again inside the first multicall and giving it the deposit function selector as data parameter. bool depositCalled = false; will be initiated again inside the second call and we will be able to call deposit inside the second call.
         multiCallData[0] = abi.encodeWithSelector(instanceContract.deposit.selector);
         data[1] = abi.encodeWithSelector(instanceContract.multicall.selector, multiCallData);
-
+        // @note delegateCall preserves the original context, the second delegateCall will use the exact same msg.value of the origical call.
         instanceContract.multicall{value: 0.001 ether}(data);
 
         // Now our deposit balance is the same as the actual contract ether balance
